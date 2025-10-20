@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'de.scholle.essentiax'
+version = '1.0.0'
+description = 'EssentiaX Public API'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc"
+        url = uri("https://repo.papermc.io/repository/maven-public/")
+    }
+}
+
+dependencies {
+    // Nur compileOnly, damit die API JAR sauber kompiliert, aber kein Bukkit mit eingepackt wird
+    compileOnly "io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = 'de.scholle.essentiax'
+            artifactId = 'api'
+            version = project.version
+            pom {
+                name.set('EssentiaX API')
+                description.set('Öffentliche API für Addon-Entwickler von EssentiaX.')
+                url.set('https://github.com/DEIN_GITHUB_USERNAME/EssentiaX')
+                licenses {
+                    license {
+                        name.set('MIT License')
+                        url.set('https://opensource.org/licenses/MIT')
+                    }
+                }
+                developers {
+                    developer {
+                        id.set('scholle')
+                        name.set('Scholle')
+                    }
+                }
+                scm {
+                    url.set('https://github.com/DEIN_GITHUB_USERNAME/EssentiaX')
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/DEIN_GITHUB_USERNAME/EssentiaX")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+}
